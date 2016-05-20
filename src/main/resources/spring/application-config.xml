@@ -7,5 +7,7 @@
     
     <!-- 使用annotation @Repository,@Service自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
     <context:component-scan base-package="com.hao.service"/> 
+    
+    <bean class="com.common.CommonUtils"/>
 
 </beans>
