@@ -1,7 +1,13 @@
 package com.common;
  
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.Key;
 import java.security.Provider;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +19,8 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
+
+import org.apache.commons.io.IOUtils;
 
 import com.alibaba.fastjson.JSON;
 
@@ -42,10 +50,12 @@ public class SecurityUtils {
 		Security.addProvider(sunJce);
 
 		try {
-			// Generate secret key for HMAC-MD5
-			KeyGenerator kg = KeyGenerator.getInstance("HmacMD5");
-			SecretKey sk = kg.generateKey();
-			System.out.println(sk.toString());
+//			// Generate secret key for HMAC-MD5
+//			KeyGenerator kg = KeyGenerator.getInstance("HmacMD5");
+//			//获取key
+//			SecretKey sk = kg.generateKey();
+			
+			SecretKey sk = (SecretKey) getKey("HmacMD5.key");
 
 			// Get instance of Mac object implementing HMAC-MD5, and
 			// initialize it with the above secret key
@@ -231,10 +241,62 @@ public class SecurityUtils {
 		return (System.currentTimeMillis() + "").substring(5, 13);
 	}
 	
+	public static void createKey(String keyPath) {
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+		try {
+			SecureRandom sr = new SecureRandom();
+			//KeyGenerator kg = KeyGenerator.getInstance("DES");
+			KeyGenerator kg = KeyGenerator.getInstance("HmacMD5");
+			kg.init(sr);
+			fos = new FileOutputStream(keyPath);
+			oos = new ObjectOutputStream(fos);
+
+			Key key = kg.generateKey();
+			oos.writeObject(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(fos);
+			IOUtils.closeQuietly(oos);
+		}
+	}
 	
+	public static Key getKey(String keyPath) {
+		Key kp = null;
+		InputStream is = null;
+		ObjectInputStream ois = null;
+		try {
+			is = ClassLoader.getSystemClassLoader().getResourceAsStream(keyPath);
+			return getKey(is);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(is);
+			IOUtils.closeQuietly(ois);
+		}
+		return kp;
+	}
+	
+	public static Key getKey(InputStream is) {
+		Key key = null;
+		ObjectInputStream ois = null;
+		try {
+			ois = new ObjectInputStream(is);
+			key = (Key) ois.readObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(ois);
+		}
+		return key;
+	}
 	
 	public static void main(String[] args) {
+		
 		// TODO Auto-generated method stub
+		//createKey("d:/HmacMD5.key");
+		
 
 		Map<String, Object> mapData = new HashMap<String, Object>();
 		
@@ -264,6 +326,13 @@ public class SecurityUtils {
 		System.out.println(SecurityUtils.getHashPath(1000L));
 		System.out.println(SecurityUtils.HmacMD5("didihaodai"));
 		System.out.println(SecurityUtils.HmacMD5("didihaodai"));
+		
+		String desinfo2 = "75b8870d052784ecf3930769bbd010867d2b08b8d66f4b6e1774044fb878f0802a87b2579192ef2fd371698b577c5b13e7174149508b4d9c089a15f3f489f5959789bf684a4dabbac322e0c20a6026beb225cb6db4cce793e05deebad9bfe7dc2a25363dac07b1c0e4f940bbb07dfc713cc293d354b6b1bb7e432cf60ad8da10ff49d3960317c6095dc63f3de8964313fdb5e7d9ca2939cd";
+		
+		String result2 = SecurityUtils.desEncryptAsString(desinfo2, SecurityUtils.COMMON_KEY);
+		System.out.println("解密后："+result2);
+		
+		
 	}
 
 }
