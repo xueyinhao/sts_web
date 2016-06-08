@@ -26,6 +26,17 @@ public class TestDate {
 	    System.out.println(System.currentTimeMillis()/1000L - 1461659791);
 	    //1461659791
 	    
+	    cal.set(2016, 5-1, 31);
+	    System.out.println(cal.getTime());
+	    
+	    Calendar cal2 = Calendar.getInstance();
+        
+        for(int i=1;i<=12;i++){
+        	cal2.setTime(cal.getTime());
+        	cal2.add(Calendar.MONTH, i);
+        	System.out.println(cal2.getTime());
+        }
+	    
 	    
 }
 }

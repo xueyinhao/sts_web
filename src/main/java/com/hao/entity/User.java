@@ -1,8 +1,8 @@
 package com.hao.entity;
 
 public class User {
-	public String name;
-	public String age;
+	private String name;
+	private String age;
 	
 	public String getName() {
 		return name;

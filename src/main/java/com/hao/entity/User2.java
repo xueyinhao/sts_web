@@ -1,6 +1,6 @@
 package com.hao.entity;
 
-public class User2 {
+public class User2 extends User{
 	public String name2;
 	public String age;
 	public String getName2() {
