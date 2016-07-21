@@ -22,7 +22,7 @@ public class TestCompareTables {
 	public static Connection getConnection(String schema) {
 		
 		String driver = "com.mysql.jdbc.Driver";
-	    String url = "jdbc:mysql://192.168.1.11:3306/" + schema + "?useUnicode=true&characterEncoding=utf8";
+	    String url = "jdbc:mysql://sit.xhhang.com:3306/" + schema + "?useUnicode=true&characterEncoding=utf8";
 	    String username = "xhsit";
 	    String password = "sit1818";
 	    
@@ -109,8 +109,8 @@ public class TestCompareTables {
 	@Test
 	public void testDB() {
 		try{
-		Map sitMap = getTableInfo(getConnection("sit"));
-		Map sit3Map = getTableInfo(getConnection("sit3"));
+		Map sitMap = getTableInfo(getConnection("ddhd"));
+		Map sit3Map = getTableInfo(getConnection("ddhd_sit"));
 		doCompare(sitMap,sit3Map);
 		doCompare(sit3Map,sitMap);
 		}catch(Exception ex){
